@@ -1,6 +1,9 @@
 /// <reference types="Cypress" />
 
 describe('Central de Atendimento ao Cliente TAT', function () {
+    const THREE_SECONDS_IN_MS = 3000
+    const longtext = 'Estou com diversas dúvidas sobre o conteúdo apresentado neste curso.'
+
     beforeEach(function () {
         cy.visit('./src/index.html')
     })
@@ -11,7 +14,11 @@ describe('Central de Atendimento ao Cliente TAT', function () {
 
     })
 
-    it('preenche os campos obrigatórios e envia o formulário', function () {
+    it.only('preenche os campos obrigatórios e envia o formulário', () => { // o "() =>" é uma forma de substituir a "function ()".
+
+
+        cy.clock()// congela o tempo.
+
         cy.get('#firstName')
             .should('be.visible')
             .type('Bruno')
@@ -30,16 +37,20 @@ describe('Central de Atendimento ao Cliente TAT', function () {
             .should('have.value', '85994070718')
         cy.get('#open-text-area')
             .should('be.visible')
-            .type('Estou com diversas dúvidas sobre o conteúdo apresentado neste curso.')
-            .should('have.value', 'Estou com diversas dúvidas sobre o conteúdo apresentado neste curso.')
+            .type(longtext, { delay: 0 })//longtext digita o conteúdo da variável "longtext" e o "{delay:0}" especifica q a digitação deve ser instantânea.
         cy.get('.button[type="submit"]') //pegar o button que possui o type "submit"
             .should('be.visible')
             .click()
         cy.get('.success')
             .should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)// time de 3 milissegundos e "THREE_SECONDS_IN_MS" é a variável de 3000 milissegundos.
+        cy.get('.success')
+            .should('not.be.visible')
     })
 
     it('exibe mensagem de erro ao submeter o formulário com e-mail inválido', function () {
+        cy.clock()
+
         cy.get('#firstName')
             .should('be.visible')
             .type('Bruno')
@@ -58,13 +69,16 @@ describe('Central de Atendimento ao Cliente TAT', function () {
             .should('have.value', '85994070718')
         cy.get('#open-text-area')
             .should('be.visible')
-            .type('Estou com diversas dúvidas sobre o conteúdo apresentado neste curso.')
+            .type(longtext, { delay: 0 })
             .should('have.value', 'Estou com diversas dúvidas sobre o conteúdo apresentado neste curso.')
         cy.get('.button[type="submit"]') //pegar o button que possui o type "submit"
             .should('be.visible')
             .click()
         cy.get('.error')
             .should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)// time de 3 milissegundos
+        cy.get('.error')
+            .should('not.be.visible')
     })
 
     it('verificar retorno vazio ao digitar um valor ñ numérico no campo "telefone"', function () {
@@ -74,6 +88,8 @@ describe('Central de Atendimento ao Cliente TAT', function () {
     })
 
     it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function () {
+        cy.clock()
+
         cy.get('#firstName')
             .should('be.visible')
             .type('Bruno')
@@ -91,27 +107,40 @@ describe('Central de Atendimento ao Cliente TAT', function () {
             .should('be.checked')
         cy.get('#open-text-area')
             .should('be.visible')
-            .type('Estou com diversas dúvidas sobre o conteúdo apresentado neste curso.')
+            .type(longtext, { delay: 0 })
             .should('have.value', 'Estou com diversas dúvidas sobre o conteúdo apresentado neste curso.')
         cy.get('.button[type="submit"]') //pegar o button que possui o type "submit"
             .should('be.visible')
             .click()
         cy.get('.error')
             .should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)// time de 3 milissegundos
+        cy.get('.error')
+            .should('not.be.visible')
     })
 
     it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios.', function () {
+        cy.clock()
+
         cy.contains('button', 'Enviar') //pegar o button(botão) que possui o "Enviar"
             .should('be.visible')
             .click()
         cy.get('.error')
             .should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)// time de 3 milissegundos
+        cy.get('.error')
+            .should('not.be.visible')
     })
 
     it('Envia o formulário com sucesso usando um comando customizado', function () {
+        cy.clock()
+
         cy.fillMandatoryFieldsAndSubimt() //preencha os campos mandatórios e os submetes.
         cy.get('.success')
             .should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)// time de 3 milissegundos
+        cy.get('.success')
+            .should('not.be.visible')
     })
 
     it('Selecionar o produto "Youtube" pelo seu texto', function () {
